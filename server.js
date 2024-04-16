@@ -22,7 +22,7 @@ server.use(express.json())
     Lösenord - <Password>
     Databasnamnet (Optional) - <DB-Name>
 */
-mongoose.connect("mongodb+srv://kirapopko:8Q6nR0qCAutHz1m5@cluster0.2drcl5t.mongodb.net/InlamningsUppgift2")
+mongoose.connect("mongodb+srv://kirapopko:8Q6nR0qCAutHz1m5@cluster0.2drcl5t.mongodb.net/IU2")
 /*
   Byt ut connection-string'en med er egna. Ni hittar er på MongoDB Atlas genom att gå in på: 
 
@@ -38,7 +38,13 @@ mongoose.connect("mongodb+srv://kirapopko:8Q6nR0qCAutHz1m5@cluster0.2drcl5t.mong
 
 // Skapar ett schema för "users", vilket definierar strukturen för varje "user"-dokument i databasen.
 const usersSchema = new mongoose.Schema({
-  username: String  // Varje "user" kommer att ha ett "username".
+  username: String, // Varje "user" kommer att ha ett "username".
+  title: String,
+  author_name: String,  
+  genre: String,
+  year_of_publishing: String,
+  about_book: String,
+  rate: String
 });
 
 /* 
