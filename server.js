@@ -76,6 +76,46 @@ server.get('/api/users/:id', async (request, response) => {
   }
 })
 
+server.get('/api/users/test', async (request, response) => {
+ 
+  try {
+    //const { page, limit } = request.query;
+    console.log(request.query)
+  
+
+   console.log("test")
+    const users = await User.find()
+        /*.limit(limit * 1)
+        .skip((page - 1) * limit)
+        .exec();*/
+
+    //const count = await User.countDocuments(); // Count all documents
+
+     response.json({
+      users: users,
+      //totalPages: Math.ceil(count / limit),
+      //currentPage: page,
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: "Något gick fel", error: error })
+  }
+});
+
+server.get("/api/users/tests", async (req, res) => {
+  try {
+    console.log(req.query)
+    return res.status(409).json({ message: "Ingen inloggad." })
+  } catch (error) {
+    res.status(500).json({ message: "Något blev fel på servern" })
+  }
+})
+
+
+
+
+
+
 /* 
   Startar servern så att den lyssnar på den definierade porten.
   När servern har startat, loggas ett meddelande till konsolen.
