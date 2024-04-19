@@ -1,6 +1,11 @@
+
+
 // Importera Express för att kunna skapa en webbserver och Mongoose för att interagera med MongoDB-databasen.
 import express from "express"
 import mongoose from "mongoose"
+
+//const express = require("express");
+//const mongoose = require("mongoose");
 
 // Skapar en instans av Express-appen, detta är vår webbserver.
 const server = express()
@@ -61,8 +66,18 @@ server.get('/api/users', async (req, res) => {
   res.json(await User.find());  // Använder Mongoose's "find"-metod för att hämta alla "users".
 });
 
+server.get('/api/users/:id', async (request, response) => {
+  try {
+    const user = await User.findById(request.params.id)
+
+    response.status(200).json({ message: "Du försöker hämta 1 användare", user: user })
+  } catch (error) {
+    response.status(500).json({ message: "Något gick fel", error: error })
+  }
+})
+
 /* 
   Startar servern så att den lyssnar på den definierade porten.
   När servern har startat, loggas ett meddelande till konsolen.
 */
-server.listen(port, () => console.log(`Listening on port http://localhost:${port}`))
+server.listen(port, () => console.log(`Listening on port http://localhost:${port}`)) 
