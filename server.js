@@ -70,48 +70,26 @@ server.get('/api/users/:id', async (request, response) => {
   try {
     const user = await User.findById(request.params.id)
 
-    response.status(200).json({ message: "Du försöker hämta 1 användare", user: user })
+    response.status(200).json({ message: "You are trying to get 1 user", user: user })
   } catch (error) {
-    response.status(500).json({ message: "Något gick fel", error: error })
-  }
-})
-
-server.get('/api/users/test', async (request, response) => {
- 
-  try {
-    //const { page, limit } = request.query;
-    console.log(request.query)
-  
-
-   console.log("test")
-    const users = await User.find()
-        /*.limit(limit * 1)
-        .skip((page - 1) * limit)
-        .exec();*/
-
-    //const count = await User.countDocuments(); // Count all documents
-
-     response.json({
-      users: users,
-      //totalPages: Math.ceil(count / limit),
-      //currentPage: page,
-    });
-  } catch (error) {
-    console.error(error);
-    response.status(500).json({ message: "Något gick fel", error: error })
-  }
-});
-
-server.get("/api/users/tests", async (req, res) => {
-  try {
-    console.log(req.query)
-    return res.status(409).json({ message: "Ingen inloggad." })
-  } catch (error) {
-    res.status(500).json({ message: "Något blev fel på servern" })
+    response.status(500).json({ message: "Some error occured", error: error })
   }
 })
 
 
+
+
+
+server.put("/api/users/:id", async (request, response) => {
+  try {
+    const updateUser = await User.findByIdAndUpdate(request.params.id, request.body)
+
+    response.json({ updatedUser: updateUser })
+
+  } catch (error) {
+    response.status(500).json({ message: "Some error occured", error: error })
+  }
+})
 
 
 
