@@ -66,6 +66,7 @@ server.get('/api/users', async (req, res) => {
   res.json(await User.find());  // Använder Mongoose's "find"-metod för att hämta alla "users".
 });
 
+
 server.get('/api/users/:id', async (request, response) => {
   try {
     const user = await User.findById(request.params.id)
@@ -76,7 +77,61 @@ server.get('/api/users/:id', async (request, response) => {
   }
 })
 
+server.post('/api/users', async (request, response) => {
+  try {
 
+    const title = request.body.title
+    const author_name = request.body.author_name 
+    const genre = request.body.genre
+    const year_of_publishing = request.body.year_of_publishing
+    const about_book = request.body.about_book
+    const rate = request.body.rate
+
+    console.log(title + " - title");
+    console.log(typeof title + " - title typeof");
+    console.log(title.length + " - title length");
+
+    console.log(author_name + " - author_name");
+    console.log(typeof author_name + " - author_name typeof");
+    console.log(author_name.length + " - author_name length");
+
+    console.log(genre + " - genre");
+    console.log(typeof genre + " - genre typeof");
+    console.log(genre.length + " - genre length");
+
+    console.log(year_of_publishing + " - year_of_publishing");
+    console.log(typeof year_of_publishing + " - year_of_publishing typeof");
+    console.log(year_of_publishing.length + " - year_of_publishing length");
+
+    console.log(about_book + " - about_book");
+    console.log(typeof about_book + " - about_book typeof");
+    console.log(about_book.length + " - about_book length");
+
+    console.log(rate + " - rate");
+    console.log(typeof rate + " - rate typeof");
+    console.log(rate.length + " - rate length");
+
+    if (!title || !author_name || !genre || !year_of_publishing || !about_book || !rate) {
+      return response.status(400).json({ message: "All fields are required." });
+    }
+
+
+    const newUser = new User({
+
+      title: title,
+      author_name: author_name,  
+      genre: genre,
+      year_of_publishing: year_of_publishing,
+      about_book: about_book,
+      rate: rate
+    })
+    const savedUser = await newUser.save()
+
+    response.status(201).json({ message: "Du försöker skapa en ny användare!", newUser: newUser, savedUser: savedUser })
+  } catch (error) {
+    response.status(500).json({ message: "Något gick fel", error: error })
+  }
+})
 
 
 
@@ -92,7 +147,42 @@ server.put("/api/users/:id", async (request, response) => {
 })
 
 
+server.delete("/api/users/:id", async (request, response) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(request.params.id)
 
+    response.json({ deletedUser: deletedUser })
+
+  } catch (error) {
+    response.status(500).json({ message: "Något gick fel", error: error })
+  }
+})
+
+server.get('/api/users/test', async (request, response) => {
+ 
+  try {
+    //const { page, limit } = request.query;
+    console.log(request.query)
+  
+
+   console.log("test")
+    const users = await User.find()
+        /*.limit(limit * 1)
+        .skip((page - 1) * limit)
+        .exec();*/
+
+    //const count = await User.countDocuments(); // Count all documents
+
+     response.json({
+      users: users,
+      //totalPages: Math.ceil(count / limit),
+      //currentPage: page,
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: "Något gick fel", error: error })
+  }
+});
 
 /* 
   Startar servern så att den lyssnar på den definierade porten.
