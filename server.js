@@ -158,30 +158,39 @@ server.delete("/api/users/:id", async (request, response) => {
   }
 })
 
-server.get('/api/users/test', async (request, response) => {
+server.get('/api/users', async (request, response, next) => {
  
   try {
-    //const { page, limit } = request.query;
+    let { page, limit } = request.query;
     console.log(request.query)
   
 
-   console.log("test")
-    const users = await User.find()
-        /*.limit(limit * 1)
+   //console.log("test")
+    const users = await User.find({ ...request.query })
+        .limit(limit * 1)
         .skip((page - 1) * limit)
-        .exec();*/
+        .sort({ createdAt: -1 });
 
-    //const count = await User.countDocuments(); // Count all documents
+    const count = await User.countDocuments(); // Count all documents
 
-     response.json({
-      users: users,
-      //totalPages: Math.ceil(count / limit),
-      //currentPage: page,
+     /*return response.json({
+      users,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
     });
   } catch (error) {
     console.error(error);
     response.status(500).json({ message: "Något gick fel", error: error })
   }
+});*/
+return response.json({
+  users,
+  totalPages: Math.ceil(count / limit),
+  currentPage: page,
+});
+} catch (err) {
+next(err);
+}
 });
 
 /* 
