@@ -7,7 +7,7 @@ console.log("Start seeding databse!")
 async function seedDB() {
   try {
     mongoose.connect("mongodb+srv://kirapopko:8Q6nR0qCAutHz1m5@cluster0.2drcl5t.mongodb.net/IU2")
-    const usersList = await createUsers(3)
+    const usersList = await createUsers(30)
     console.log("UsersList - ", usersList)
   } catch (error) {
     console.log(`Errormessage: ${error}`)

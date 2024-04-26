@@ -62,6 +62,53 @@ const User = mongoose.model('users', usersSchema);
   Skapar en GET - route på '/api/users'. 
   När denna route anropas, hämtar den alla dokument från vår "users"-collection och skickar tillbaka dem som en JSON-response.
 */
+server.get('/api/users/filter', async (request, response) => {
+  try {
+    let { page, limit } = request.query;
+    console.log(request.query);
+
+    const users = await User.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ createdAt: -1 });
+
+    const count = await User.countDocuments(); // Count all documents
+
+    return response.json({
+      users,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: "Något gick fel", error: error });
+    // You may want to call `next(error)` here if you want to pass the error to the error handling middleware
+  }
+});
+server.get('/api/users', async (request, response) => {
+  try {
+    let { page, limit } = request.query;
+    console.log(request.query);
+
+    const users = await User.find({ ...request.query })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ createdAt: -1 });
+
+    const count = await User.countDocuments(); // Count all documents
+
+    return response.json({
+      users,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: "Något gick fel", error: error });
+    // You may want to call `next(error)` here if you want to pass the error to the error handling middleware
+  }
+});
+
 server.get('/api/users', async (req, res) => {
   res.json(await User.find());  // Använder Mongoose's "find"-metod för att hämta alla "users".
 });
@@ -158,40 +205,33 @@ server.delete("/api/users/:id", async (request, response) => {
   }
 })
 
-server.get('/api/users', async (request, response, next) => {
- 
+/*server.get('/api/users', async (req, res) => {
   try {
-    let { page, limit } = request.query;
-    console.log(request.query)
-  
+    const page = parseInt(req.query.page, 10) ;
+    const limit = parseInt(req.query.limit, 10) ;
 
-   //console.log("test")
-    const users = await User.find({ ...request.query })
-        .limit(limit * 1)
-        .skip((page - 1) * limit)
-        .sort({ createdAt: -1 });
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({ message: "Page and limit must be positive integers." });
+    }
 
-    const count = await User.countDocuments(); // Count all documents
+    const { name } = req.query;
+    let query = {};
+    if (name) {
+      query.name = { $regex: new RegExp(name, 'i') };
+    }
 
-     /*return response.json({
-      users,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
-    });
+    const skip = (page - 1) * limit;
+    const users = await users.find(query).skip(skip).limit(limit);
+
+    res.status(200).json(users);
   } catch (error) {
     console.error(error);
-    response.status(500).json({ message: "Något gick fel", error: error })
+    res.status(500).json({ message: "Something went wrong", error });
   }
-});*/
-return response.json({
-  users,
-  totalPages: Math.ceil(count / limit),
-  currentPage: page,
-});
-} catch (err) {
-next(err);
-}
-});
+}); */
+
+
+
 
 /* 
   Startar servern så att den lyssnar på den definierade porten.
