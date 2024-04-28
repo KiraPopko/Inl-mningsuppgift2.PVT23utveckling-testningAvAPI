@@ -28,9 +28,9 @@ async function createUsers(amount) {
     })
     await newUser.save()
     usersList.push(newUser)
-    // console.log(`New user - ${newUser.username} - has been created.`)
+    
   }
-  // console.log(`${amount} users has been seeded.`)
+ 
   return usersList
 }
 
