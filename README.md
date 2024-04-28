@@ -1,4 +1,4 @@
-Bifoga en README-fil i ditt repository med tydliga instruktioner om hur du konfigurerar, kör och testar ditt API
+
 
 1. API configuration:
 
