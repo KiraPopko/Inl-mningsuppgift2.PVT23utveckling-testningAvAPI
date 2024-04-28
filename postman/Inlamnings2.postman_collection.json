@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "1,2check status 200 and correct data format",
+			"name": "GET request, check status 200 and correct data format",
 			"event": [
 				{
 					"listen": "test",
@@ -17,22 +17,18 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Content-Type is present\", function () {",
-							"    pm.response.to.have.header(\"Content-Type\");",
-							"});",
 							"",
 							"pm.test(\"Response is JSON\", function () {",
-							"    // Check if the Content-Type header exists",
+							"    ",
 							"    pm.response.to.have.header(\"Content-Type\");",
 							"    ",
-							"    // Get the value of the Content-Type header",
 							"    var contentType = pm.response.headers.get(\"Content-Type\");",
 							"    ",
-							"    // Check if the Content-Type header contains \"application/json\"",
 							"    pm.expect(contentType).to.include(\"application/json\");",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -55,19 +51,23 @@
 			"response": []
 		},
 		{
-			"name": "3 check status 400",
+			"name": "Check status 404",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 400\", function () {",
+							"pm.test(\"Status code is 404\", function () {",
 							"    pm.response.to.have.status(404);",
+							"    pm.response.to.have.status(\"Not Found\");",
 							"});",
+							"",
+							"",
 							"",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -90,7 +90,7 @@
 			"response": []
 		},
 		{
-			"name": "4 check API returns correct data",
+			"name": "Check API returns correct data",
 			"event": [
 				{
 					"listen": "test",
@@ -101,12 +101,13 @@
 							"});",
 							"",
 							"pm.test(\"Body matches string\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"Patsy Champlin\");",
+							"    pm.expect(pm.response.text()).to.include(\"Harry Champlin\");",
 							"});",
 							"",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -114,7 +115,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/users/66222876be7513990bb73a4b",
+					"raw": "http://localhost:3000/api/users/662b9921dd14717e71a75aa5",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -123,14 +124,223 @@
 					"path": [
 						"api",
 						"users",
-						"66222876be7513990bb73a4b"
+						"662b9921dd14717e71a75aa5"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "5 check paginated result",
+			"name": "Check paginated result",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Correct number of users per page\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.users.length).to.equal(10);",
+							"});",
+							"",
+							"",
+							"   ",
+							"    ",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/filter?page=1&limit=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"filter"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "non English text",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var format = /[åöä]/;",
+							"",
+							"var responseBody = pm.response.json();",
+							"",
+							"pm.test(\"Special characters detected in response body\", function() {",
+							"    pm.expect(JSON.stringify(responseBody)).to.match(format);",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"_id\": \"66222876be7513990bb73a4b\",\n        \"title\": \"östersjö to amid victorious!!!@%\",\n        \"author_name\": \"Patsy Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas. Xiphias spargo cubo vinco deprecator.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/662ba2a8ca26f38fe5b50cdd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"662ba2a8ca26f38fe5b50cdd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Concurence request-not done",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.sendRequest(\"http://localhost:3000/api/users/662b9921dd14717e71a75aa5\", function (err, response) {",
+							"    console.log(response.json());",
+							"});",
+							"",
+							"// Example with a plain string URL",
+							"pm.sendRequest('http://localhost:3000/api/users/662b9921dd14717e71a75aa5', (error, response) => {",
+							"  if (error) {",
+							"    console.log(error);",
+							"  } else {",
+							"    console.log(response);",
+							"  }",
+							"});",
+							"",
+							"// Example with a full-fledged request",
+							"const putRequest = {",
+							"  url: 'http://localhost:3000/api/users/662ba2aaca26f38fe5b50d12',",
+							"  method: 'PUT',",
+							"  headers: {",
+							"    'Content-Type': 'application/json',",
+							"    'Authorization': 'Bearer your_access_token_here'",
+							"  },",
+							"  body: {",
+							"    mode: 'raw',",
+							"    raw: JSON.stringify({ title: 'Updated Name', rate: '5' })",
+							"  }",
+							"};",
+							"pm.sendRequest(putRequest, (error, response) => {",
+							"  console.log(error ? error : response.json());",
+							"});",
+							"",
+							"// Example containing a test",
+							"pm.sendRequest('http://localhost:3000/api/users/662ba2aaca26f38fe5b50d12', (error, response) => {",
+							"  if (error) {",
+							"    console.log(error);",
+							"  }",
+							"",
+							"  pm.test('response should be okay to process', () => {",
+							"    pm.expect(error).to.equal(null);",
+							"    pm.expect(response).to.have.property('code', 200);",
+							"    pm.expect(response).to.have.property('status', 'OK');",
+							"  });",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"_id\": \"66222876be7513990bb73a4b\",\n        \"title\": \"östersjö to amid victorious!!!@%\",\n        \"author_name\": \"Patsy Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas. Xiphias spargo cubo vinco deprecator.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/662ba2aaca26f38fe5b50d0c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"662ba2aaca26f38fe5b50d0c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT request + added non_english text",
 			"event": [
 				{
 					"listen": "test",
@@ -141,20 +351,35 @@
 							"});",
 							"",
 							"pm.test(\"Body matches string\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"Patsy Champlin\");",
+							"    pm.expect(pm.response.text()).to.include(\"östersjö år\");",
+							"",
 							"});",
 							"",
+							"pm.test(\"checking update massage\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"You updated a user!\");",
+							"",
+							"});",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\n        \"_id\": \"662ba2a8ca26f38fe5b50cdd\",\n        \"title\": \"östersjö år\",\n        \"author_name\": \"Gretchen Doyle\",\n        \"genre\": \"love_story\",\n        \"year_of_publishing\": \"Thu Jan 25 2024 09:59:07 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Curia cernuus abduco fugit aut. Consequuntur blandior aedificium vesica tonsor uberrime virtus. Subnecto armarium consuasor compono.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:3000/api/users/pagin?limit=3",
+					"raw": "http://localhost:3000/api/users/662ba2a8ca26f38fe5b50cdd",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -163,25 +388,47 @@
 					"path": [
 						"api",
 						"users",
-						"pagin"
-					],
-					"query": [
-						{
-							"key": "limit",
-							"value": "3"
-						}
+						"662ba2a8ca26f38fe5b50cdd"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/test?limit=50",
+			"name": "POST request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"You created new user!\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\n        \"title\": \"ARRA beginning\",\n        \"author_name\": \"Gretchen Doyle\",\n        \"genre\": \"detective\",\n        \"year_of_publishing\": \"Thu Jan 25 2024 09:59:07 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Curia cernuus abduco fugit aut.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:3000/api/test?limit=50",
+					"raw": "http://localhost:3000/api/users",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -189,17 +436,207 @@
 					"port": "3000",
 					"path": [
 						"api",
-						"test"
-					],
-					"query": [
-						{
-							"key": "limit",
-							"value": "50"
-						}
+						"users"
 					]
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "DELETE request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Deleted user is handled properly\", function () {",
+							"    pm.expect(pm.response.json()).to.have.property(\"deletedUser\");",
+							"    pm.expect(pm.response.json().deletedUser).to.be.null;",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"_id\": \"661e326c0ad97cdd222730d6\",\n        \"title\": \"Bobby in the world\",\n        \"author_name\": \"Harry Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/661e326c0ad97cdd222730d6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"661e326c0ad97cdd222730d6"
+					]
+				},
+				"description": "\nThis endpoint sends an HTTP DELETE request to http://localhost:3000/api/users/661e326c0ad97cdd222730d6 to delete a user.\n\n### Request Body\n- _id (text)\n- title (text)\n- author_name (text)\n- genre (text)\n- year_of_publishing (text)\n- about_book (text)\n- rate (text)\n- __v (text)\n\n### Response\n- Status: 200\n- Content-Type: application/json\n- deletedUser: null\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Correct update (check data from PUT request)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"östersjö år\");",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"_id\": \"66222876be7513990bb73a4b\",\n        \"title\": \"östersjö to amid victorious!!!@%\",\n        \"author_name\": \"Patsy Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas. Xiphias spargo cubo vinco deprecator.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/662ba2a8ca26f38fe5b50cdd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"662ba2a8ca26f38fe5b50cdd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mock Server",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Mock Server",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "9935"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"26cf-Xxtw/EIDF4NRwo+L3VGDyR3cUn4\""
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 22 Apr 2024 12:30:51 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"_id\": \"661d81bf1e2e6d9bac443cba\",\n        \"title\": \"poise finally\",\n        \"author_name\": \"Carlos Homenick Jr.\",\n        \"year_of_publishing\": \"Wed Oct 18 2023 10:51:27 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Provident absorbeo acerbitas curto casso commodi sumo aliquam. Audeo cui tot derelinquo tutis in officiis solio uredo. Unus ara communis dignissimos socius decretum adiuvo calcar somnus antea.\",\n        \"rate\": \"4\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661d81c01e2e6d9bac443cbd\",\n        \"title\": \"insecure supersize broadly\",\n        \"author_name\": \"Jackie Sporer\",\n        \"year_of_publishing\": \"Thu May 11 2023 05:30:21 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Custodia sunt verumtamen paulatim adficio audacia corona corrupti. Tenus ara vereor spero crepusculum argentum. Animus comptus quas statim clarus adipisci asporto.\",\n        \"rate\": \"5\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661d81c01e2e6d9bac443cbf\",\n        \"title\": \"solid\",\n        \"author_name\": \"Fannie Nikolaus\",\n        \"year_of_publishing\": \"Thu Jan 16 2025 14:13:45 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Admoveo verus verumtamen nisi defendo.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661d85cc4e44c372287ab5c5\",\n        \"title\": \"beneath\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661d85cc4e44c372287ab5c7\",\n        \"title\": \"woot officially phew whereas\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e326b0ad97cdd222730d1\",\n        \"title\": \"snap notwithstanding considering\",\n        \"author_name\": \"Theodore Grimes\",\n        \"year_of_publishing\": \"Sun Nov 19 2023 09:30:12 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Cognatus acies combibo bene acsi certe vehemens argentum tibi traho. Veritatis averto asperiores commemoro uxor vespillo conatus combibo.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e326c0ad97cdd222730d4\",\n        \"title\": \"compress\",\n        \"author_name\": \"Edward Wunsch\",\n        \"year_of_publishing\": \"Wed Jan 01 2025 11:25:29 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Compello summa voluptatibus tantillus stipes bos tersus condico accedo. Validus cometes caritas animus id compono cariosus ter. Sponte ater approbo territo adversus catena vobis.\",\n        \"rate\": \"5\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33872de1b9a77128c05a\",\n        \"title\": \"complex\",\n        \"author_name\": \"Dominick Altenwerth II\",\n        \"year_of_publishing\": \"Tue Oct 29 2024 07:00:44 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Amplitudo tamisium comes comparo denique decretum neque caelum compello coerceo.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33882de1b9a77128c05d\",\n        \"title\": \"where blindly physically\",\n        \"author_name\": \"Bob Harvey\",\n        \"year_of_publishing\": \"Wed Dec 20 2023 14:35:21 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Quo itaque textilis perferendis auctor cognatus uterque utrimque.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33882de1b9a77128c05f\",\n        \"title\": \"blah but outside failing\",\n        \"author_name\": \"Edgar Emard\",\n        \"year_of_publishing\": \"Thu Feb 01 2024 14:32:39 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Amissio acceptus ex. Ventito varius cibus textus creber aut aurum. Tametsi bibo depromo averto vix iste adeo defessus defaeco.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33a450161eb9caa96c71\",\n        \"title\": \"appearance er ouch\",\n        \"author_name\": \"Lillie Lehner\",\n        \"year_of_publishing\": \"Mon Jun 17 2024 20:39:04 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Tamisium utilis varius tego valens amplus appositus.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33a450161eb9caa96c74\",\n        \"title\": \"toward down\",\n        \"author_name\": \"Ira Cruickshank IV\",\n        \"year_of_publishing\": \"Sun Feb 09 2025 18:29:46 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Cornu avarus speculum surculus aduro uredo. Error vir terreo consuasor demergo adflicto. Corroboro amoveo crastinus utpote concedo bibo tabella dolore aperte labore.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33a450161eb9caa96c76\",\n        \"title\": \"supposing notwithstanding haw\",\n        \"author_name\": \"Josephine Zemlak\",\n        \"year_of_publishing\": \"Mon Mar 24 2025 01:12:18 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Volaticus talus tersus acquiro aliquam decerno. Uxor tabernus thalassinus ver aduro crapula crur tamdiu voluptate curo. Caveo acsi creptio aufero adimpleo valetudo cubitum terga compono stipes.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33d8d05a879f30cc69a1\",\n        \"title\": \"ump\",\n        \"author_name\": \"Erika Runolfsson\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Wed Mar 27 2024 09:39:17 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Nesciunt pariatur compono. Nisi casus villa nulla cribro suscipio voluptatum delectus iusto.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33d8d05a879f30cc69a4\",\n        \"title\": \"inasmuch so\",\n        \"author_name\": \"Yvonne Greenholt\",\n        \"genre\": \"love_story\",\n        \"year_of_publishing\": \"Wed Jul 10 2024 11:49:13 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Uterque synagoga carpo. Fuga cimentarius desipio modi aeger tersus deduco atque. Possimus facilis unus vesper adflicto colo deputo ultra.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661e33d8d05a879f30cc69a6\",\n        \"title\": \"cartoon lest\",\n        \"author_name\": \"Mrs. Ashley Bechtelar-Cronin\",\n        \"genre\": \"comedy\",\n        \"year_of_publishing\": \"Fri Feb 23 2024 21:21:29 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Subito astrum aufero comptus tutamen tonsor occaecati.\",\n        \"rate\": \"5\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661ea1f5f173011b4b70fc5c\",\n        \"title\": \"where pregnancy partial even\",\n        \"author_name\": \"Jill Smitham\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Fri Aug 30 2024 00:38:18 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Compello sodalitas cornu dedecor tamisium attero. Eum caterva error tardus adeptio conscendo vulgus tremo.\",\n        \"rate\": \"5\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661ea1f6f173011b4b70fc5f\",\n        \"title\": \"case outside so\",\n        \"author_name\": \"Juan Donnelly\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Jul 02 2024 21:29:27 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Nostrum animi tendo vigor sollers tandem perspiciatis. Esse cuppedia amet solutio. Subito a tondeo.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661ea1f6f173011b4b70fc61\",\n        \"title\": \"like mid\",\n        \"author_name\": \"Dale Bins\",\n        \"genre\": \"drama\",\n        \"year_of_publishing\": \"Thu Jul 18 2024 17:57:05 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Solvo confugo quas arto culpo soluta.\",\n        \"rate\": \"1\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661ea4d521926de8485b360c\",\n        \"title\": \"fav anxiously\",\n        \"author_name\": \"Gretchen Lemke PhD\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Thu Jul 20 2023 07:32:19 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Vilitas custodia suffragium argumentum cognomen strues baiulus tergeo. Alienus sperno terreo qui beneficium sto quae sumo acervus cetera.\",\n        \"rate\": \"5\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661ea4d621926de8485b360f\",\n        \"title\": \"into back what\",\n        \"author_name\": \"Diana Roob DDS\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Thu Apr 11 2024 00:17:28 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Crepusculum depopulo undique bellicus tam accusantium argentum apparatus. Patruus patruus dapifer certe tracto minus toties.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661ea4d621926de8485b3611\",\n        \"title\": \"warlike severity\",\n        \"author_name\": \"Santiago Dicki\",\n        \"genre\": \"drama\",\n        \"year_of_publishing\": \"Wed Jun 28 2023 10:11:19 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Capillus communis aurum tenuis delibero aliquam. Numquam speculum ustulo. Iusto a defero cibo.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661eb0b2eacab78e9564339a\",\n        \"title\": \"willfully\",\n        \"author_name\": \"Mr. Eduardo Adams Jr.\",\n        \"genre\": \"comedy\",\n        \"year_of_publishing\": \"Thu Mar 28 2024 23:34:57 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Ambulo amplitudo asporto enim textilis coadunatio eos quibusdam tredecim. Agnitio undique calculus vallum demum vindico contigo. Spiritus et valde.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661eb0b3eacab78e9564339d\",\n        \"title\": \"whoa marshal upon shave\",\n        \"author_name\": \"Rochelle Schneider\",\n        \"genre\": \"comedy\",\n        \"year_of_publishing\": \"Mon Jan 06 2025 07:25:06 GMT+0100 (Central European Standard Time)\",\n        \"about_book\": \"Sursum sodalitas colo speciosus clam capto. Apostolus vaco ara.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"661eb0b3eacab78e9564339f\",\n        \"title\": \"toward oh roll\",\n        \"author_name\": \"Seth Cremin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Sun Oct 08 2023 01:03:45 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Adsum abstergo vere verus caterva ars crudelis attonbitus ultra nostrum.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"66222875be7513990bb73a46\",\n        \"title\": \"rotten hopeful hoof\",\n        \"author_name\": \"Traci Schmeler\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Thu Jun 29 2023 02:57:41 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Laboriosam utpote careo supellex apud terror ter dicta aetas clam.\",\n        \"rate\": \"3\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"66222876be7513990bb73a49\",\n        \"title\": \"cygnet including boohoo\",\n        \"author_name\": \"Perry Satterfield\",\n        \"genre\": \"love_story\",\n        \"year_of_publishing\": \"Sun Sep 22 2024 04:41:44 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Vulariter creator odit altus acerbitas stultus.\",\n        \"rate\": \"4\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"66222876be7513990bb73a4b\",\n        \"title\": \"östersjö to amid victorious!!!@%\",\n        \"author_name\": \"Patsy Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas. Xiphias spargo cubo vinco deprecator.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"662429856e234e88c83e4907\",\n        \"title\": \"Bobby in the world\",\n        \"author_name\": \"Harry Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"662612846e234e88c83e4909\",\n        \"title\": \"Bobby in the world\",\n        \"author_name\": \"Harry Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"662613136e234e88c83e490b\",\n        \"title\": \"Bobby in the world\",\n        \"author_name\": \"Harry Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    },\n    {\n        \"_id\": \"662613a96e234e88c83e490d\",\n        \"title\": \"Bobby in the world\",\n        \"author_name\": \"Harry Champlin\",\n        \"genre\": \"detectiv\",\n        \"year_of_publishing\": \"Tue Apr 16 2024 09:44:11 GMT+0200 (Central European Summer Time)\",\n        \"about_book\": \"Ulterius vestrum aspicio veritas.\",\n        \"rate\": \"2\",\n        \"__v\": 0\n    }\n]"
+				}
+			]
 		}
 	]
 }
